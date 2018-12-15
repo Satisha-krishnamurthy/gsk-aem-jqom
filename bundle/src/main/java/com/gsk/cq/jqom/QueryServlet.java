@@ -66,10 +66,9 @@ public class QueryServlet extends SlingAllMethodsServlet {
 
 			log.info("####### session ######### : " + session.getUserID());
 
-
 			QueryManager queryManager = session.getWorkspace().getQueryManager();
 			// create query
-			String sqlStatement = "SELECT * FROM [nt:unstructured] AS s  WHERE ISDESCENDANTNODE([/content/sensodyne]) and "
+			String sqlStatement = "SELECT * FROM [nt:unstructured] AS s  WHERE ISDESCENDANTNODE([/content/sensodyne/product]) and "
 					+ "([cq:lastModified] >= '2018-12-14T00:00' or [jcr:lastModified] >= '2018-12-14T00:00')";
 			Query query = queryManager.createQuery(sqlStatement, Query.JCR_SQL2);
 
@@ -83,19 +82,10 @@ public class QueryServlet extends SlingAllMethodsServlet {
 				Node node = nodes.nextNode();
 				Resource rs = resolver.getResource(node.getPath());
 				ValueMap prop = rs.adaptTo(ValueMap.class);
-				String component = prop.get("sling:resourceType", String.class);
-				String[] componentSplit = component.split("/");
-				log.info("##### get component Path ####### :" + component);
-				if (node.getName().equalsIgnoreCase(componentSplit[componentSplit.length - 1])
-						&& !node.getName().equalsIgnoreCase("jcr:content")) {
-					log.info("##### get If codition Path ####### : " + prop.get("height", String.class));
-
-					Gson gson = new GsonBuilder().create();
-					String json = gson.toJson(prop);
-					JSONObject jsonObj = new JSONObject(json);
-					jsonArry.put(jsonObj);
-
-				}
+				Gson gson = new GsonBuilder().create();
+				String json = gson.toJson(prop);
+				JSONObject jsonObj = new JSONObject(json);
+				jsonArry.put(jsonObj);
 
 			}
 			pw.println(jsonArry);
